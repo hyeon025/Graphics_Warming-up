@@ -22,18 +22,19 @@ struct Board {
 };
 vector<Board> board;
 //int matchcnt = 0;
+int n = 1;
 
 int main() {
 
-	for(char c : str) {
-		board.push_back({c, false, false});
-		board.push_back({c, false, false});
+	for (char c : str) {
+		board.push_back({ c, false, false });
+		board.push_back({ c, false, false });
 	}
-	board.push_back({'@', false, false});
+	board.push_back({ '@', false, false });
 
 	shuffle(board.begin(), board.end(), dre);
 
-	int count = 20;
+	int count = 15;
 	int score = 0;
 
 	string input1, input2;
@@ -110,7 +111,7 @@ int main() {
 
 					}
 					else {
-						if (board[(i - 1) * 5 + j].match) {	
+						if (board[(i - 1) * 5 + j].match) {
 							int color{};
 							if (!board[(i - 1) * 5 + j].j_match) {
 								color = static_cast<int>(board[(i - 1) * 5 + j].alpha - 'A' + 1);
@@ -119,7 +120,7 @@ int main() {
 								SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 							}
 							else {
-								SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),14);
+								SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
 							}
 							cout << board[(i - 1) * 5 + j].alpha << '\t';
 							SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
@@ -134,14 +135,14 @@ int main() {
 			Sleep(2000);
 			continue;
 		}
-		else if(input1 == "q") {
+		else if (input1 == "q") {
 			break;
 		}
 		else {
 			cin >> input2;
 		}
-		
-		if(input1.size() != 2 || input2.size() != 2) {
+
+		if (input1.size() != 2 || input2.size() != 2) {
 			cout << "잘못된 입력입니다." << endl;
 			Sleep(800);
 			continue;
@@ -167,7 +168,7 @@ int main() {
 		r = row2 - '1';
 		int idx2 = r * 5 + c;
 
-		if(idx1 == idx2) {
+		if (idx1 == idx2) {
 			cout << "같은 위치입니다." << endl;
 			continue;
 		}
@@ -185,15 +186,33 @@ int main() {
 			count--;
 			cout << "짝 맞음" << endl;
 		}
-		else if(board[idx1].alpha == '@' || board[idx2].alpha == '@') {
+		else if (board[idx1].alpha == '@' || board[idx2].alpha == '@') {
 			board[idx1].match = true;
 			board[idx2].match = true;
 			board[idx1].j_match = true;
 			board[idx2].j_match = true;
-			if(isalpha(board[idx1].alpha))
+			if (isalpha(board[idx1].alpha)) {
+				for (int i = 0; i < 25; i++) {
+					if (board[i].alpha == board[idx1].alpha && i != idx1) {
+						board[i].match = true;
+						board[i].j_match = true;
+						board[i].alpha = toupper(static_cast<unsigned char>(board[i].alpha));
+						break;
+					}
+				}
 				board[idx1].alpha = toupper(static_cast<unsigned char>(board[idx1].alpha));
-			else if (isalpha(board[idx2].alpha))
+			}
+			else if (isalpha(board[idx2].alpha)) {
+				for (int i = 0; i < 25; i++) {
+					if (board[i].alpha == board[idx2].alpha && i != idx2) {
+						board[i].match = true;
+						board[i].j_match = true;
+						board[i].alpha = toupper(static_cast<unsigned char>(board[i].alpha));
+						break;
+					}
+				}
 				board[idx2].alpha = toupper(static_cast<unsigned char>(board[idx2].alpha));
+			}
 			score += 100;
 			count--;
 			cout << "짝 맞음 (조커)" << endl;
@@ -226,7 +245,7 @@ int main() {
 							SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 						}
 						else {
-							SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),14);
+							SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
 						}
 						cout << board[(i - 1) * 5 + j].alpha << '\t';
 						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
@@ -248,6 +267,63 @@ int main() {
 		}
 		cout << "==========================" << endl;
 		Sleep(2000);
+
+		for (size_t i = 0; i < 25; i++)
+		{
+			if (!board[i].match) {
+				break;
+			}
+			if (i == 24) {
+				n = 0;
+			}
+		}
+		if(n == 0) {
+			break;
+		}
 	}
 
+	system("cls"); //화면 지우기
+	cout << "======score :" << score << "====== " << endl;
+	for (int i = 0; i < 6; i++) {
+		if (i != 0) {
+			cout << i << '\t';
+		}
+		else
+			cout << '\t';
+		for (int j = 0; j < 5; j++) {
+			if (i == 0) {
+				cout << char('a' + j) << '\t';
+			}
+			else {
+				if (board[(i - 1) * 5 + j].match) {
+					int color{};
+					if (!board[(i - 1) * 5 + j].j_match) {
+						board[(i - 1) * 5 + j].alpha = toupper(board[(i - 1) * 5 + j].alpha);
+						color = static_cast<int>(board[(i - 1) * 5 + j].alpha - 'A' + 1);
+						if (color == 7)
+							color = 13;
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+					}
+					else {
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
+					}
+					cout << board[(i - 1) * 5 + j].alpha << '\t';
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+				}
+				else
+					cout << '*' << '\t';
+			}
+		}
+		cout << endl << endl;
+	}
+	if (count != 0) {
+		cout << "==========================" << endl;
+		cout << "!!! 게임 클리어 !!!" << endl;
+		cout << "시도 횟수:" << 20 - count << "번" << endl;
+	}
+	else {
+		cout << "==========================" << endl;
+		cout << "ㅠㅠㅠ Game Over ㅠㅠㅠ" << endl;
+		cout << "시도 횟수:" << 20 << "번" << endl;
+	}
 }
