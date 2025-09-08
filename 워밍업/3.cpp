@@ -19,7 +19,16 @@ struct Data {
 };
 
 bool compare(Data& a, Data& b) {
-	return a.dist() > b.dist();
+	unsigned int a_num = numeric_limits<unsigned int>::min();
+	unsigned int b_num = numeric_limits<unsigned int>::min();
+
+	if (a.exi)
+		a_num = a.dist();
+	if (b.exi)
+		b_num = b.dist();
+
+	return a_num > b_num;
+
 }
 
 void print_list(array<Data,10>& data) {
